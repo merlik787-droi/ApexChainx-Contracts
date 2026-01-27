@@ -198,69 +198,69 @@ impl SLACalculatorContract {
     // SLA calculation
     // --------------------
 
-    pub fn calculate_sla(
-        env: Env,
-        outage_id: Symbol,
-        severity: Symbol,
-        mttr_minutes: u32,
-    ) -> Result<SLAResult, SLAError> {
-        let cfg = Self::get_config(env.clone(), severity.clone())?;
-        let threshold = cfg.threshold_minutes;
+pub fn calculate_sla(
+    env: Env,
+    outage_id: Symbol,
+    severity: Symbol,
+    mttr_minutes: u32,
+) -> Result<SLAResult, SLAError> {
+    let cfg = Self::get_config(env.clone(), severity.clone())?;
+    let threshold = cfg.threshold_minutes;
 
-        // --------------------
-        // Case 1: violated → penalty
-        // --------------------
-        if mttr_minutes > threshold {
-            let overtime = (mttr_minutes - threshold) as i128;
-            let penalty = overtime * cfg.penalty_per_minute;
-
-            // 🔔 Emit SLA event
-            env.events().publish(
-                (EVENT_SLA_CALC, severity.clone()),
-                (outage_id.clone(), symbol_short!("viol"), -penalty),
-            );
-
-            return Ok(SLAResult {
-                outage_id,
-                status: symbol_short!("viol"),
-                mttr_minutes,
-                threshold_minutes: threshold,
-                amount: -penalty,
-                payment_type: symbol_short!("pen"),
-                rating: symbol_short!("poor"),
-            });
-        }
-
-        // --------------------
-        // Case 2: met → reward
-        // --------------------
-        let performance_ratio = (mttr_minutes * 100) / threshold;
-
-        let (multiplier, rating) = if performance_ratio < 50 {
-            (200, symbol_short!("top"))
-        } else if performance_ratio < 75 {
-            (150, symbol_short!("excel"))
-        } else {
-            (100, symbol_short!("good"))
-        };
-
-        let reward = (cfg.reward_base * (multiplier as i128)) / 100;
+    // --------------------
+    // Case 1: violated → penalty
+    // --------------------
+    if mttr_minutes > threshold {
+        let overtime = (mttr_minutes - threshold) as i128;
+        let penalty = overtime * cfg.penalty_per_minute;
 
         // 🔔 Emit SLA event
         env.events().publish(
             (EVENT_SLA_CALC, severity.clone()),
-            (outage_id.clone(), symbol_short!("met"), reward),
+            (outage_id.clone(), symbol_short!("viol"), -penalty),
         );
 
-        Ok(SLAResult {
+        return Ok(SLAResult {
             outage_id,
-            status: symbol_short!("met"),
+            status: symbol_short!("viol"),
             mttr_minutes,
             threshold_minutes: threshold,
-            amount: reward,
-            payment_type: symbol_short!("rew"),
-            rating,
-        })
+            amount: -penalty,
+            payment_type: symbol_short!("pen"),
+            rating: symbol_short!("poor"),
+        });
     }
+
+    // --------------------
+    // Case 2: met → reward
+    // --------------------
+    let performance_ratio = (mttr_minutes * 100) / threshold;
+
+    let (multiplier, rating) = if performance_ratio < 50 {
+        (200, symbol_short!("top"))
+    } else if performance_ratio < 75 {
+        (150, symbol_short!("excel"))
+    } else {
+        (100, symbol_short!("good"))
+    };
+
+    let reward = (cfg.reward_base * (multiplier as i128)) / 100;
+
+    // 🔔 Emit SLA event
+    env.events().publish(
+        (EVENT_SLA_CALC, severity.clone()),
+        (outage_id.clone(), symbol_short!("met"), reward),
+    );
+
+    Ok(SLAResult {
+        outage_id,
+        status: symbol_short!("met"),
+        mttr_minutes,
+        threshold_minutes: threshold,
+        amount: reward,
+        payment_type: symbol_short!("rew"),
+        rating,
+    })
+}
 }
 
