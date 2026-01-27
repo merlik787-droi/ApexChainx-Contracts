@@ -74,6 +74,7 @@ impl SLACalculatorContract {
             .get(&ADMIN_KEY)
             .expect("Not initialized")
     }
+    
 
     
     pub fn set_config(
@@ -84,11 +85,7 @@ impl SLACalculatorContract {
         penalty_per_minute: i128,
         reward_base: i128,
     ) {
-        
-        let admin: Address = env.storage().instance().get(&ADMIN_KEY).unwrap();
-        if caller != admin {
-            panic!("Only admin can update config");
-        }
+        Self::require_admin(&env, &caller);
 
         let mut configs: Map<Symbol, SLAConfig> = env
             .storage()
@@ -115,4 +112,16 @@ impl SLACalculatorContract {
 
         configs.get(severity).expect("Config not found")
     }
+
+    fn require_admin(env: &Env, caller: &Address) {
+    let admin: Address = env
+        .storage()
+        .instance()
+        .get(&ADMIN_KEY)
+        .expect("Not initialized");
+
+    if caller != &admin {
+        panic!("Unauthorized: admin only");
+    }
+}
 }
