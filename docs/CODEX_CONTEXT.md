@@ -183,22 +183,38 @@ changes occur:
 
 ---
 
-## Critical Logic
+## Critical Logic: SLA Calculation
 
-### SLA Calculation
+### Computation Model
 
-Inputs:
+The SLA calculation is the core deterministic function that determines whether
+service targets were met and computes the corresponding financial outcome.
 
-- severity
-- MTTR
-- threshold config
+#### Input Parameters
 
-Output:
+| Parameter | Type | Description | Source |
+|-----------|------|-------------|--------|
+| `severity` | `Severity` | Incident severity level | Contract caller |
+| `mttr_minutes` | `u32` | Measured time to repair (minutes) | Contract caller |
+| `threshold_config` | `Config` | Severity-specific threshold parameters | On-chain storage |
 
-- status (met / violated)
-- amount (positive = reward, negative = penalty)
+#### Output Values
 
-Must exactly match backend logic.
+| Field | Type | Description | Possible Values |
+|-------|------|-------------|-----------------|
+| `status` | `SLAStatus` | Whether SLA target was met | `met`, `violated` |
+| `amount` | `i64` | Financial outcome (positive or negative) | Signed integer |
+| `payment_type` | `PaymentType` | Type of financial outcome | `reward`, `penalty` |
+| `rating` | `Rating` | Performance rating | `top`, `excel`, `good`, `poor` |
+
+#### Determinism Requirement
+
+The SLA computation must produce **exactly identical results** when executed in
+the contract and in the backend. This is enforced through:
+
+1. **Golden test vectors** shared between contract and backend
+2. **CI parity checks** that compare contract output against backend expectations
+3. **Integer-only math** eliminating floating-point divergence
 
 ---
 
