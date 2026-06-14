@@ -459,7 +459,32 @@ proposal. The active operator is unchanged.
 `unpause()` clears it. This gives backend operators operational context without
 requiring off-chain state tracking.
 
+## Security Considerations
+
+### Smart Contract Security
+
+- **Deterministic execution:** All calculations use integer math only — no floating point
+- **Input validation:** All function inputs are validated before state changes
+- **Access control:** Privileged operations require `require_auth()` with role verification
+- **Reentrancy protection:** Contract design prevents reentrant calls
+- **Pause mechanism:** Admin can pause the contract in case of emergency
+
+### Operational Security
+
+- **Two-step transfers:** Admin and operator role changes require confirmation
+- **Renounce safety:** Admin renounce is irreversible — use with caution
+- **Event audit trail:** All state changes emit versioned events for backend consumers
+- **Deterministic failure:** Same invalid inputs always produce same errors
+
+### Supply Chain Security
+
+- **Dependency auditing:** `cargo audit` runs on CI for every push
+- **WASM integrity:** Release artifacts include SHA-256 manifests
+- **Reproducible builds:** Local builds can be verified against CI-generated manifests
+
 ## Related Repositories
 
-- `apexchainx-fe` -> frontend application
-- `apexchainx-be` -> backend and contract bridge
+| Repository | Description |
+|------------|-------------|
+| [apexchainx-fe](https://github.com/ApexChainx/apexchainx-fe) | Frontend application (React/TypeScript) |
+| [apexchainx-be](https://github.com/ApexChainx/apexchainx-be) | Backend API and contract bridge |
