@@ -380,111 +380,76 @@ Include in your PR description:
 
 ## 🧪 Testing Guidelines
 
+### Smart Contract Tests
+
+```bash
+# Run full test suite
+cd apexchainx_calculator
+cargo test
+
+# Run with verbose output
+cargo test -- --nocapture
+
+# Run specific test
+cargo test test_sla_boundary_conditions
+```
+
 ### Frontend Tests
 
 ```bash
-# Run all tests
 npm run test
-
-# Run tests in watch mode
 npm run test:watch
-
-# Run with coverage
 npm run test:coverage
-```
-
-**Test structure:**
-```typescript
-import { render, screen, fireEvent } from '@testing-library/react';
-import { WalletConnect } from './WalletConnect';
-
-describe('WalletConnect', () => {
-  it('should connect to Freighter wallet', async () => {
-    render(<WalletConnect onConnect={jest.fn()} />);
-    
-    const button = screen.getByText('Connect Wallet');
-    fireEvent.click(button);
-    
-    // Assertions here
-  });
-});
 ```
 
 ### Backend Tests
 
 ```bash
-# Run all tests
 pytest
-
-# Run specific test file
 pytest tests/test_payment_service.py
-
-# Run with coverage
 pytest --cov=app --cov-report=html
-```
-
-**Test structure:**
-```python
-import pytest
-from app.services.stellar.payment_service import PaymentService
-
-@pytest.mark.asyncio
-async def test_create_payment():
-    """Test payment creation on Stellar network"""
-    service = PaymentService(network="testnet")
-    
-    result = await service.create_payment(
-        source_secret="S...",
-        destination="G...",
-        amount="10.00"
-    )
-    
-    assert result["status"] == "success"
-    assert "tx_hash" in result
-```
-
-### Smart Contract Tests
-
-```bash
-# Run tests
-cargo test
-
-# Run with output
-cargo test -- --nocapture
 ```
 
 ## 📚 Documentation Guidelines
 
-- Use **clear, concise language**
-- Include **code examples**
-- Add **screenshots** for UI features
-- Keep **up-to-date** with code changes
-- **Link to related docs** where helpful
-- Use **Markdown** for formatting
+| Principle | Practice |
+|-----------|----------|
+| **Clarity** | Use clear, concise language |
+| **Examples** | Include runnable code examples |
+| **Visuals** | Add diagrams for architecture, screenshots for UI |
+| **Freshness** | Keep docs in sync with code changes |
+| **Linking** | Cross-reference related documentation |
+| **Formatting** | Use Markdown with consistent structure |
 
 ## 🔒 Security Guidelines
 
-- **Never commit secrets** (API keys, private keys, passwords)
-- Use **environment variables** for sensitive data
-- Follow **principle of least privilege**
-- **Validate all inputs**
-- Use **prepared statements** for database queries
-- **Sanitize user inputs**
-- Keep **dependencies updated**
+### Do's
 
+- ✅ Use environment variables for all secrets
+- ✅ Validate all inputs at the contract boundary
+- ✅ Apply principle of least privilege to roles
+- ✅ Keep dependencies updated via Dependabot/manual review
+- ✅ Run cargo audit before merging dependency changes
+
+### Don'ts
+
+- ❌ Never commit API keys, private keys, or passwords
+- ❌ Never trust user input without validation
+- ❌ Never use unsafe code in smart contracts
 
 ## 🐛 Reporting Bugs
 
-Use the GitHub issue template and include:
+| Field | Description | Required |
+|-------|-------------|----------|
+| Title | Clear, descriptive summary | ✅ |
+| Steps to reproduce | Exact steps to trigger the bug | ✅ |
+| Expected behavior | What should happen | ✅ |
+| Actual behavior | What actually happens | ✅ |
+| Screenshots | Visual evidence if applicable | Optional |
+| Environment | OS, browser, versions | ✅ |
+| Error messages | Full stack trace if available | ✅ |
+| Stellar details | Network + tx hash if applicable | For Stellar issues |
 
-- **Clear title** describing the bug
-- **Steps to reproduce** the issue
-- **Expected behavior**
-- **Actual behavior**
-- **Screenshots** (if applicable)
-- **Environment details** (OS, browser, versions)
-- **Error messages** (full stack trace if possible)
-- **For Stellar issues**: Include network (testnet/mainnet) and transaction hash
 
 ## 💡 Suggesting Features
 
