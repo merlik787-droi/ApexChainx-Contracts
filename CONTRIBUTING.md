@@ -245,112 +245,73 @@ Then open a pull request on GitHub with:
 
 ## 🎨 Code Style Guidelines
 
-### Frontend (TypeScript/React)
-
-- Use **TypeScript** for all new files
-- Follow **React hooks** best practices
-- Use **functional components** over class components
-- Use **Tailwind CSS** for styling (no inline styles)
-- Use **shadcn/ui** components when available
-- **Extract reusable logic** into custom hooks
-- **PropTypes or TypeScript interfaces** for all components
-
-**Example:**
-```typescript
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-
-interface WalletConnectProps {
-  onConnect: (publicKey: string) => void;
-}
-
-export function WalletConnect({ onConnect }: WalletConnectProps) {
-  const [connected, setConnected] = useState(false);
-  
-  // Component logic here
-  
-  return (
-    <Button onClick={handleConnect}>
-      {connected ? 'Disconnect' : 'Connect Wallet'}
-    </Button>
-  );
-}
-```
-
-### Backend (Python/FastAPI)
-
-- Follow **PEP 8** style guide
-- Use **type hints** for all functions
-- Write **docstrings** for all public functions
-- Use **async/await** for I/O operations
-- **Pydantic models** for request/response validation
-- **Dependency injection** for services
-- **Environment variables** for configuration
-
-**Example:**
-```python
-from fastapi import APIRouter, Depends, HTTPException
-from app.models.payment import PaymentCreate, PaymentResponse
-from app.services.stellar.payment_service import PaymentService
-from app.api.deps import get_current_user
-
-router = APIRouter()
-
-@router.post("/payments", response_model=PaymentResponse)
-async def create_payment(
-    payment: PaymentCreate,
-    current_user = Depends(get_current_user)
-) -> PaymentResponse:
-    """
-    Create a new payment transaction on Stellar network.
-    
-    Args:
-        payment: Payment details including amount and destination
-        current_user: Currently authenticated user
-        
-    Returns:
-        PaymentResponse with transaction hash and status
-        
-    Raises:
-        HTTPException: If payment creation fails
-    """
-    service = PaymentService()
-    result = await service.create_payment(payment)
-    return result
-```
-
 ### Smart Contracts (Rust/Soroban)
 
-- Follow **Rust best practices**
-- **Document all public functions**
-- Use **proper error handling**
-- **Test all functions** thoroughly
-- Keep **gas costs** in mind
-- Use **clippy** for linting
+#### Principles
 
-**Example:**
+- **Determinism first:** All computations must be deterministic — no floating point, no randomness
+- **Gas efficiency:** Minimize storage writes, avoid unnecessary loops
+- **Safety:** Use integer math only, validate all inputs, fail early
+- **Documentation:** All public functions must have doc comments
+
+#### Style Rules
+
+| Rule | Standard |
+|------|----------|
+| Naming | `snake_case` for functions/variables, `PascalCase` for types |
+| Error handling | Custom error types via `#[contracterror]` |
+| Imports | Group: std → external crates → internal modules |
+| Formatting | `cargo fmt` (automated) |
+| Linting | `cargo clippy -- -D warnings` (no warnings allowed) |
+
+#### Example
+
 ```rust
 #[contractimpl]
 impl SLAContract {
-    /// Calculate SLA result for an outage
-    /// 
+    /// Calculate SLA result for an outage.
+    ///
     /// # Arguments
-    /// * `outage_id` - Unique identifier for the outage
+    /// * `outage_id` - Unique identifier for the outage event
     /// * `severity` - Severity level (Critical, High, Medium, Low)
-    /// * `mttr_minutes` - Mean time to repair in minutes
-    /// 
+    /// * `mttr_minutes` - Mean time to repair in minutes (0-525600)
+    ///
     /// # Returns
-    /// SLAResult containing status and payment information
+    /// `SLAResult` containing SLA status, payment type, and rating
     pub fn calculate_sla(
         env: Env,
         outage_id: Symbol,
         severity: Severity,
         mttr_minutes: u32,
     ) -> SLAResult {
-        // Implementation here
+        // Implementation
     }
 }
 ```
+
+### Frontend (TypeScript/React)
+
+| Rule | Standard |
+|------|----------|
+| Language | TypeScript for all new files |
+| Components | Functional components with hooks |
+| Styling | Tailwind CSS (no inline styles) |
+| UI Library | shadcn/ui components when available |
+| Reusability | Extract logic into custom hooks |
+| Typing | TypeScript interfaces for all props |
+
+### Backend (Python/FastAPI)
+
+| Rule | Standard |
+|------|----------|
+| Style | PEP 8 |
+| Typing | Type hints for all functions |
+| Documentation | Docstrings for all public functions |
+| I/O | async/await for all operations |
+| Validation | Pydantic models for request/response |
+| Architecture | Dependency injection for services |
+| Configuration | Environment variables via `.env` |
+
 
 ## ✅ Pull Request Guidelines
 
