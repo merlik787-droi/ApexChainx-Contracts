@@ -39,21 +39,28 @@ This repository is the execution-layer side of the 3-repo architecture:
 
 ## Overview
 
-`apexchainx-contracts` contains the Soroban-side SLA logic for ApexChainx.
+`apexchainx-contracts` contains the Soroban-side SLA logic for the ApexChainx platform.
 
 At the current checked-in state, this repository contains one active contract crate:
 
-- `apexchainx_calculator`
+| Crate | Description |
+|-------|-------------|
+| `apexchainx_calculator` | Deterministic SLA calculator with config management, statistics, and history |
 
 This contract is responsible for deterministic SLA calculation and related contract-side state such as configuration, statistics, pause state, and calculation history.
 
-## Current Stack
+## Technology Stack
 
-- Rust
-- Soroban SDK 21
-- Cargo
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Language | Rust | stable (edition 2021) |
+| Framework | Soroban SDK | 21.0.0 |
+| Blockchain | Stellar Network | — |
+| Build System | Cargo + wasm32 target | — |
+| Testing | Soroban testutils + cargo test | — |
+| Standards | #![no_std], WASM-compatible | — |
 
-Main crate manifest:
+**Main crate manifest:**
 
 - `apexchainx_calculator/Cargo.toml`
 
