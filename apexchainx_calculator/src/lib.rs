@@ -191,27 +191,53 @@ const EVENT_OP_CAN: Symbol = symbol_short!("op_can");
 const EVENT_VERSION: Symbol = symbol_short!("v1");
 
 // -----------------------------------------------------------------------
-// Errors
+// Error Codes
 // -----------------------------------------------------------------------
+//
+// All contract errors are represented as a u32 discriminant in the SLAError
+// enum. Backend consumers can retrieve the full catalogue via
+// `get_failure_schema()` which maps each code to a machine-readable label
+// and human-readable description.
+//
+// Error codes are stable: once assigned, a code is never reused.
+// New codes are appended to the end of the enum.
+// -----------------------------------------------------------------------
+
+/// Contract has already been initialized — cannot initialize twice.
 #[contracterror]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[repr(u32)]
 pub enum SLAError {
+    /// initialize() was already called.
     AlreadyInitialized = 1,
+    /// Contract has not been initialized yet.
     NotInitialized = 2,
+    /// Caller lacks the required role (admin or operator).
     Unauthorized = 3,
+    /// No configuration found for the given severity.
     ConfigNotFound = 4,
+    /// On-chain storage version does not match binary expectation.
     VersionMismatch = 5,
-    ContractPaused = 6,            // #27
-    NoPendingTransfer = 7,         // #63 #64
-    InvalidThreshold = 8,          // #70
-    InvalidPenalty = 9,            // #70
-    InvalidReward = 10,            // #70
-    InvalidSeverity = 11,          // #70
-    RetentionLimitOutOfRange = 12, // SC-013
-    DuplicateOutageInput = 13,       // SC-W5-046
-    InvalidPenaltyAmount = 14,       // SC-W5-046
-    InvalidRewardAmount = 15,         // SC-W5-046
+    /// Contract is paused — state-changing operations are blocked. (#27)
+    ContractPaused = 6,
+    /// No pending transfer exists to accept or cancel. (#63, #64)
+    NoPendingTransfer = 7,
+    /// Threshold minutes outside valid range or severity-specific limit. (#70)
+    InvalidThreshold = 8,
+    /// Penalty per minute outside valid range or severity-specific limit. (#70)
+    InvalidPenalty = 9,
+    /// Reward base outside valid range. (#70)
+    InvalidReward = 10,
+    /// Severity not in supported list. (#70)
+    InvalidSeverity = 11,
+    /// Retention limit must be between 1 and MAX_HISTORY_SIZE. (SC-013)
+    RetentionLimitOutOfRange = 12,
+    /// Duplicate outage_id with conflicting inputs detected. (SC-W5-046)
+    DuplicateOutageInput = 13,
+    /// Computed penalty amount is invalid (e.g., overflowed to zero). (SC-W5-046)
+    InvalidPenaltyAmount = 14,
+    /// Computed reward amount is invalid (e.g., zero or negative). (SC-W5-046)
+    InvalidRewardAmount = 15,
 }
 
 // -----------------------------------------------------------------------
