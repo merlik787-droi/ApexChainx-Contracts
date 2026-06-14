@@ -1,20 +1,44 @@
-# ApexChainx System
+# ApexChainx System — Project Context
 
-## Repositories
+> **Purpose:** This document describes the high-level system architecture, repository landscape,
+> and future contract roadmap for the ApexChainx platform.
 
-- apexchainx-fe → frontend
-- apexchainx-be → backend
-- apexchainx-contracts → smart contracts
+## Table of Contents
+
+- [Repository Architecture](#repository-architecture)
+- [System Flow](#system-flow)
+- [Architectural Rules](#architectural-rules)
+- [SC-100: Future Contract Roadmap](#sc-100-future-contract-roadmap)
+
+---
+
+## Repository Architecture
+
+The ApexChainx platform is composed of three repositories:
+
+| Repository | Role | Technology |
+|------------|------|------------|
+| `apexchainx-fe` | Frontend application | React / TypeScript |
+| `apexchainx-be` | Backend API and integration layer | Python / FastAPI |
+| `apexchainx-contracts` | Soroban smart contracts (this repo) | Rust / Soroban SDK |
 
 ## System Flow
 
-User → FE → BE → Contracts → BE → FE
+```
+ User
+  |
+  v
+┌─────────┐     ┌─────────┐     ┌──────────────┐
+│   FE    │ ──→ │   BE    │ ──→ │  Contracts   │
+│ (React) │ ←── │ (API)   │ ←── │  (Soroban)   │
+└─────────┘     └─────────┘     └──────────────┘
+```
 
-## Rules
+## Architectural Rules
 
-- FE never talks to contracts directly
-- BE is the bridge
-- Contracts are execution layer only
+1. **Frontend never calls contracts directly** — all contract interactions go through the backend
+2. **Backend is the exclusive bridge** — translates contract data to frontend-friendly responses
+3. **Contracts are execution-layer only** — pure deterministic computation, no external dependencies
 
 ---
 
