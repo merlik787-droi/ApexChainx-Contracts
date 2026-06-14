@@ -47,41 +47,26 @@ validation parameters:
 
 ### General Rules (Apply to All Severities)
 
-#### Threshold Minutes
-- **Range**: 1 to 1440 minutes (24 hours maximum)
-- **Purpose**: Prevents unrealistic thresholds (0 minutes) or extremely long thresholds
-- **Error**: `InvalidThreshold` (error code 8)
-
-#### Penalty Per Minute
-- **Range**: 1 to 10,000 units per minute
-- **Purpose**: Ensures penalties are positive and within reasonable bounds
-- **Error**: `InvalidPenalty` (error code 9)
-
-#### Reward Base
-- **Range**: 1 to 100,000 units
-- **Purpose**: Ensures rewards are positive and within reasonable bounds
-- **Error**: `InvalidReward` (error code 10)
+| Parameter | Valid Range | Purpose | Error on Violation |
+|-----------|-------------|---------|-------------------|
+| `threshold_minutes` | 1 – 1,440 (24 hours) | Prevents zero or unrealistic thresholds | `InvalidThreshold` (code 8) |
+| `penalty_per_minute` | 1 – 10,000 | Ensures penalties are positive and bounded | `InvalidPenalty` (code 9) |
+| `reward_base` | 1 – 100,000 | Ensures rewards are positive and bounded | `InvalidReward` (code 10) |
 
 ### Severity-Specific Rules
 
-#### Critical Severity
-- **Threshold**: Maximum 60 minutes
-- **Penalty**: Minimum 50 units per minute
-- **Rationale**: Critical incidents should have short response windows and significant penalties
+| Severity | Max Threshold | Min Penalty/Min | Rationale |
+|----------|--------------|-----------------|-----------|
+| `critical` | 60 minutes | 50 units | Short response window, significant penalty for failures |
+| `high` | 120 minutes | 25 units | Moderate response window with meaningful penalties |
+| `medium` | 240 minutes (4h) | 10 units | Longer response window, moderate penalty floor |
+| `low` | 1,440 minutes (24h) | Max 100 units | Lowest priority, penalties capped to prevent over-punishment |
 
-#### High Severity  
-- **Threshold**: Maximum 120 minutes
-- **Penalty**: Minimum 25 units per minute
-- **Rationale**: High incidents should have reasonable response windows and moderate penalties
+### Rule Enforcement Order
 
-#### Medium Severity
-- **Threshold**: Maximum 240 minutes (4 hours)
-- **Penalty**: Minimum 10 units per minute
-- **Rationale**: Medium incidents can have longer response windows but still need meaningful penalties
-
-#### Low Severity
-- **Penalty**: Maximum 100 units per minute
-- **Rationale**: Low severity incidents should have lower penalties relative to higher severities
+1. **General parameter bounds** are validated first (range checks)
+2. **Severity-specific constraints** are validated second (severity-dependent limits)
+3. **Cross-parameter consistency** is validated last (e.g., penalty < reward for same severity)
 
 ## Error Handling
 
