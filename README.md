@@ -9,6 +9,40 @@
 
 # ApexChainx Smart Contracts
 
+## Frequently Asked Questions
+
+### What is ApexChainx?
+
+ApexChainx is a smart contract platform built on the Stellar network for
+deterministic SLA (Service Level Agreement) calculation, payment escrow,
+and multi-party settlement.
+
+### What blockchain does this use?
+
+These contracts run on the **Stellar network** using the **Soroban** smart
+contract platform.
+
+### How is SLA calculated?
+
+The contract takes severity level, measured MTTR (Mean Time To Repair), and
+configured thresholds to determine whether SLA targets were met. Results include
+status (met/violated), payment type (reward/penalty), and rating.
+
+### Can I call contracts directly from the frontend?
+
+**No.** All contract invocations must go through the backend API layer. The
+frontend never interacts with contracts directly.
+
+### How are contract upgrades handled?
+
+The contract includes a version negotiation protocol (`get_version_info()`) that
+allows backends to verify compatibility before deployment.
+
+### Is the contract upgradeable?
+
+No. The contract is not natively upgradeable. Upgrades require deploying a new
+contract and migrating state through the backend.
+
 > **Soroban-based SLA calculator and multi-contract coordination suite for the Stellar network.**
 
 This repository is the execution-layer side of the 3-repo architecture:
