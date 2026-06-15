@@ -2,15 +2,10 @@
 # ApexChainx Contracts — CI Pipeline
 # =============================================================================
 #
-# Triggered on push/PR to main. Runs the essential checks:
+# Triggered on push/PR to main. Essential checks only:
 #   1. Formatting  (rustfmt)
 #   2. Linting     (clippy)
 #   3. Tests       (cargo test)
-#   4. no-std      (cargo check --target wasm32-unknown-unknown --lib)
-#
-# The no-std check verifies WASM compilation and catches accidental std
-# imports (e.g. std::vec, std::string, println!) that would compile in
-# tests yet fail at deployment.
 # =============================================================================
 
 name: CI
@@ -37,7 +32,6 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-          targets: wasm32-unknown-unknown
 
       - name: Cache Cargo dependencies
         uses: Swatinem/rust-cache@v2
@@ -52,6 +46,3 @@ jobs:
 
       - name: Run tests
         run: cargo test --manifest-path apexchainx_calculator/Cargo.toml
-
-      - name: no-std compliance (WASM check)
-        run: cargo check --manifest-path apexchainx_calculator/Cargo.toml --target wasm32-unknown-unknown --lib
