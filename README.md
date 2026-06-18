@@ -208,6 +208,21 @@ If those are planned, they are future work rather than part of the present repos
 - Cargo
 - optional: Soroban CLI for deployment workflows
 
+### Environment Configuration
+
+To configure the environment variables for this project, copy the template `.env.example` to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+And then edit the `.env` file with your specific configurations. This file is ignored by Git to prevent committing secrets:
+- `SOROBAN_RPC_URL`: The RPC endpoint for the Stellar/Soroban network.
+- `SOROBAN_NETWORK_PASSPHRASE`: Passphrase of the target network.
+- `DEPLOYER_SECRET_KEY`: Private key/secret key for deploying contracts.
+- `CONTRACT_ID`: The ID of the deployed smart contract.
+
+
 ### Run Tests\n\n```bash\ncd apexchainx_calculator\ncargo test\n```\n\n### Test Vector Artifacts for Backend Parity\n\nRun `cargo test` to generate/update canonical SLA test vectors as JSON snapshots:\n\n```\napexchainx_calculator/test_snapshots/tests/*.json\n```\n\n**Key Vectors**:\n- `test_backend_parity_threshold_boundary_cases.*.json`: SLA met/viol boundaries\n- `test_backend_parity_reward_tier_cases.*.json`: Reward tiers (top/excel/good)\n- `test_stress_1000_calculations_mixed_severities.*.json`: Performance aggregates\n- `test_config_snapshot_is_deterministic_and_complete.*.json`: Full config\n\n**Backend Usage**:\n1. Consume snapshots for parity tests: Input (severity/mttr) → match contract `calculate_sla_view`\n2. Use `get_config_snapshot()` + `get_result_schema()` for schema validation.\n3. Maintenance: `cargo test` after SLA changes → snapshots auto-update.\n\nVectors ensure contract/backend parity without manual duplication.\n\n### Build The Contract\n\n```bash\ncd apexchainx_calculator\ncargo build\n```\n\n### Build WASM\n\n```bash\ncd apexchainx_calculator\ncargo build --target wasm32-unknown-unknown --release\n```\n\nExpected artifact:\n\n- `apexchainx_calculator/target/wasm32-unknown-unknown/release/apexchainx_calculator.wasm`\n\n## Deploy-Oriented Workflow
 
 The current repository does not ship deployment scripts, but the existing crate
