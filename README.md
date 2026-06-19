@@ -183,6 +183,7 @@ apexchainx-contracts/
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
 ├── README.md
+├── SECURITY.md
 ├── TODO.md
 └── pers-store/                    # Persistent storage test fixtures
 ```
@@ -474,7 +475,13 @@ proposal. The active operator is unchanged.
 `unpause()` clears it. This gives backend operators operational context without
 requiring off-chain state tracking.
 
+## Code of Conduct
+
+This project adheres to a code of conduct that all contributors are expected to follow. Please read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before contributing.
+
 ## Security Considerations
+
+Please refer to our [Security Policy](SECURITY.md) for information on supported versions, our disclosure policy, and how to report a vulnerability.
 
 ### Smart Contract Security
 
